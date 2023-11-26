@@ -1,70 +1,84 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { motion, useInView } from "framer-motion";
+import Web3 from "web3";
 import ProjectCard from "./ProjectCard";
 import ProjectTag from "./ProjectTag";
-import {motion, useInView} from "framer-motion"
+import Abi1 from "../abi/Abi1";
+import Abi2 from "../abi/Abi2";
+import Abi3 from "../abi/Abi3";
 
-const projectsData = [
+// Initialize Web3
+const web3 = new Web3("https://polygon-mumbai.infura.io/v3/6f9ce52853f94e708b4458e10336a8f8");
+
+// Fetch the latest block on the Ethereum network
+web3.eth.getBlock("latest")
+
+// Base de datos de diferentes NFTS.
+
+const nftConfigurations = [
   {
-    id: 1,
-    title: "React Portfolio Website",
-    description: "Project 1 description",
-    image: "/images/nfts/frase.png",
-    tag: ["All", "Web"],
-    contractUrl: "https://etherscan.io/",
+    tokenContract: "0x5Be109fe4D785761Fc98Cf2D6C969C630cDfDebc",
+    abi: Abi1,
+    tokenId: 1,
   },
-  {
-    id: 2,
-    title: "Potography Portfolio Website",
-    description: "Project 2 description",
-    image: "/images/nfts/Libre.jpg",
-    tag: ["All", "Web"],
-    contractUrl: "https://etherscan.io/",
-  },
-  {
-    id: 3,
-    title: "E-commerce Application",
-    description: "Project 3 description",
-    image: "/images/nfts/ynhm.png",
-    tag: ["All", "Web"],
-    contractUrl: "https://etherscan.io/",
-  },
-  // {
-  //   id: 4,
-  //   title: "Food Ordering Application",
-  //   description: "Project 4 description",
-  //   image: "/images/projects/4.png",
-  //   tag: ["All", "Mobile"],
-  // },
-  // {
-  //   id: 5,
-  //   title: "React Firebase Template",
-  //   description: "Authentication and CRUD operations",
-  //   image: "/images/projects/5.png",
-  //   tag: ["All", "Web"],
-  // },
-  // {
-  //   id: 6,
-  //   title: "Full-stack Roadmap",
-  //   description: "Project 5 description",
-  //   image: "/images/projects/6.png",
-  //   tag: ["All", "Web"],
-  // },
+  // Agrega más objetos según sea necesario
 ];
+
+
 const ProjectsSection = () => {
+  // State for filtering projects based on tags
   const [tag, setTag] = useState("All");
+  const [metadataList, setMetaDataList] = useState([])
+
+  // Ref and isInView for animation
   const ref = useRef(null);
-  const isInView = useInView(ref, {once: true});
+  const isInView = useInView(ref, { once: true });
 
-  const filteredProjects = projectsData.filter((project) =>
-    project.tag.includes(tag)
-  );
+  // Fetch metadata when the component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+    const contractPromises = nftConfigurations.map(async ({ tokenContract, abi, tokenId }) => {
+      const contract = new web3.eth.Contract(abi, tokenContract);
 
+      try {
+        const data = await contract.methods.retrieve().call();
+        return data;
+      } catch (error) {
+        console.error("Error fetching metadata:", error);
+        return null;
+      }
+    });
+
+    Promise.all(contractPromises)
+      .then((metadataList) => {
+        setMetaDataList(metadataList.filter(Boolean));
+        console.log(metadataList)
+      })
+      .catch((error) => {
+        console.error("Error fetching metadata:", error);
+      });
+    };
+
+    fetchData();
+
+  }, []);
+
+
+
+  // Filter projects based on selected tag
+  const filteredProjects = 
+  tag === "All" ? metadataList 
+  : metadataList.filter((nft) => nft._contractType.includes(tag));
+
+
+  // Variants for card animation
   const cardVariants = {
     initial: { y: 50, opacity: 0 },
     animate: { y: 0, opacity: 1 },
   };
 
+  // Handle tag change
   const handleTagChange = (newTag) => {
     setTag(newTag);
   };
@@ -81,35 +95,36 @@ const ProjectsSection = () => {
           isSelected={tag === "All"}
         />
         <ProjectTag
-          name="Web"
+          name="ERC-721"
           onClick={handleTagChange}
-          isSelected={tag === "Web"}
+          isSelected={tag === "ERC-721"}
         />
         <ProjectTag
-          name="Mobile"
+          name="ERC-1155"
           onClick={handleTagChange}
-          isSelected={tag == "Mobile"}
+          isSelected={tag == "ERC-1155"}
         />
       </div>
       <ul ref={ref} className="grid md:grid-cols-3 gap-8 md:gap-12">
-        {filteredProjects.map((project, index) => (
-          <motion.li
-            key={index}
-            variants={cardVariants}
-            initial="initial"
-            animate={isInView ? "animate" : "initial"}
-            transition={{ duration: 0.3, delay: index * 0.4 }}
-          >
-            <ProjectCard
-              key={project.id}
-              title={project.title}
-              description={project.description}
-              imgUrl={project.image}
-              // gitUrl={project.gitUrl}
-              contractUrl={project.contractUrl}
-            />
-          </motion.li>
-        ))}
+        {
+          filteredProjects.map((project, index) => {
+            return (
+              <motion.li
+                key={index}
+                variants={cardVariants}
+                initial="initial"
+                animate={isInView ? "animate" : "initial"}
+                transition={{ duration: 0.3, delay: index * 0.4 }}
+              >
+                <ProjectCard
+                  key={project.index}
+                  title={project._name}
+                  // description={project._name}
+                  img={project._imageUrl}
+                />
+              </motion.li>
+            )
+          })}
       </ul>
     </section>
   );
