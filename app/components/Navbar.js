@@ -4,6 +4,12 @@ import Link from "next/link";
 import NavLink from "./NavLink";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import MenuOverlay from "./MenuOverlay";
+import localFont from 'next/font/local'
+
+const miFuente = localFont({
+ src: '../../public/fonts/Kompot.otf',
+ variable: '--font-mi-fuente',
+})
 
 const navLinks = [
   {
@@ -20,13 +26,14 @@ const Navbar = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-10 bg-[#121212] bg-opacity-90">
-      <div className="flex flex-wrap items-center justify-between mx-auto p-8">
+    <nav className="fixed top-0 left-0 right-0 z-10 bg-[#121212] bg-opacity-90 px-12">
+      <div className={`flex flex-wrap items-center justify-between mx-auto p-8 ${miFuente.className}`}>
         <Link
-          href="/"
-          className="text-2xl md:text-5xl text-white font-semibold"
+          href="https://ignaluna.vercel.app/"
+          target="_blank"
+          className={`text-2xl md:text-5xl text-white font-semibold ${miFuente.className}`}
         >
-          LOGO
+         IGNACIO LUNA
         </Link>
         <div className="block md:hidden">
           {!navbarOpen ? (

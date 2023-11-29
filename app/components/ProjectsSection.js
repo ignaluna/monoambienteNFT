@@ -7,6 +7,12 @@ import ProjectTag from "./ProjectTag";
 import Abi1 from "../abi/Abi1";
 import Abi2 from "../abi/Abi2";
 import Abi3 from "../abi/Abi3";
+import localFont from 'next/font/local'
+
+const miFuente = localFont({
+  src: '../../public/fonts/Kompot.otf',
+  variable: '--font-mi-fuente',
+})
 
 // Initialize Web3
 const web3 = new Web3("https://polygon-mumbai.infura.io/v3/6f9ce52853f94e708b4458e10336a8f8");
@@ -84,8 +90,8 @@ const ProjectsSection = () => {
   };
 
   return (
-    <section id="projects">
-      <h2 className="text-center text-4xl font-bold text-white mt-4 mb-8 md:mb-12">
+    <section id="projects" className={`${miFuente.className}`}>
+      <h2 className={`text-center text-4xl font-bold text-white mt-4 mb-8 md:mb-12 ${miFuente.className}`}>
         My Projects
       </h2>
       <div className="flex flex-row justify-center items-center gap-2 text-white my-6">
@@ -105,7 +111,7 @@ const ProjectsSection = () => {
           isSelected={tag == "ERC-1155"}
         />
       </div>
-      <ul ref={ref} className="grid md:grid-cols-3 gap-8 md:gap-12">
+      <ul ref={ref} className="grid md:grid-cols-3 gap-8 md:gap-12 ">
         {
           filteredProjects.map((project, index) => {
             return (
