@@ -49,6 +49,7 @@ const ProjectsSection = () => {
 
       try {
         const data = await contract.methods.retrieve().call();
+        data.contract = tokenContract;
         return data;
       } catch (error) {
         console.error("Error fetching metadata:", error);
@@ -59,7 +60,6 @@ const ProjectsSection = () => {
     Promise.all(contractPromises)
       .then((metadataList) => {
         setMetaDataList(metadataList.filter(Boolean));
-        console.log(metadataList)
       })
       .catch((error) => {
         console.error("Error fetching metadata:", error);
@@ -125,7 +125,7 @@ const ProjectsSection = () => {
                 <ProjectCard
                   key={project.index}
                   title={project._name}
-                  // description={project._name}
+                  contract={project.contract}
                   img={project._imageUrl}
                 />
               </motion.li>
