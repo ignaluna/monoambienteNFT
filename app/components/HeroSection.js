@@ -38,7 +38,7 @@ const HeroSection = () => {
                 1000,
                 "Héroes",
                 1000,
-                "Titánes",
+                "Titanes",
                 1000,
                 "Mitología",
                 1000,
@@ -50,11 +50,11 @@ const HeroSection = () => {
           </h1>
           <p className="text-[#ADB7BE] text-base sm:text-lg mb-6 lg:text-xl uppercase">
             Desde la majestuosidad del Olimpo hasta las profundidades del Tártaro, sumérgete en la mitología griega a través de nuestra exclusiva colección de NFTs.          </p>
-          <div>
+          <div className="flex items-center justify-center">
             <div
-              className="px-1 inline-block py-1 w-full sm:w-fit rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 hover:bg-slate-800 text-white mt-3"
+              className="px-1 flex items-center justify-center py-1 w-full sm:w-fit rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 hover:bg-slate-800 text-white mt-3"
             >
-              <button className="block bg-[#121212] hover:bg-slate-800 rounded-full px-5 py-2"
+              <button className="block bg-[#121212] items-center justify-center hover:bg-slate-800 rounded-full px-5 py-2 z-10"
               onClick={downloadPdf}
               >Descargar PDF</button>
             </div>
@@ -63,7 +63,7 @@ const HeroSection = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5 }} 
           className="col-span-4 place-self-center mt-4 lg:mt-0"
         >
           <div className="rounded-full bg-[#181818] w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] relative">

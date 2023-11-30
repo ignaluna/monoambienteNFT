@@ -28,6 +28,12 @@ const nftConfigurations = [
     abi: Abi1,
     tokenId: 1,
   },
+  {
+    tokenContract: "0xb1E9210c628ABa432549D3E68ae7F75a7ce70fa3",
+    abi: Abi2,
+    tokenId: 2,
+  }
+
   // Agrega más objetos según sea necesario
 ];
 
@@ -43,39 +49,59 @@ const ProjectsSection = () => {
 
   // Fetch metadata when the component mounts
   useEffect(() => {
+    const resultArray = []; // Declara resultArray fuera de fetchData
+
     const fetchData = async () => {
-    const contractPromises = nftConfigurations.map(async ({ tokenContract, abi, tokenId }) => {
-      const contract = new web3.eth.Contract(abi, tokenContract);
+      const contractPromises = nftConfigurations.map(async ({ tokenContract, abi, tokenId }) => {
+        const contract = new web3.eth.Contract(abi, tokenContract);
+        // console.log(contract);
 
-      try {
-        const data = await contract.methods.retrieve().call();
-        data.contract = tokenContract;
-        return data;
-      } catch (error) {
-        console.error("Error fetching metadata:", error);
-        return null;
-      }
-    });
+        try {
+          const data = await contract._methods.retrieve().call(); // Cambié _methods a methods
+          console.log(data)
 
-    Promise.all(contractPromises)
-      .then((metadataList) => {
-        setMetaDataList(metadataList.filter(Boolean));
-      })
-      .catch((error) => {
-        console.error("Error fetching metadata:", error);
+          if (Array.isArray(data)) {
+            data.forEach((item) => {
+              const objeto = {};
+              for (let i = 0; i < item.length; i++) {
+                objeto._name = item[0];
+                objeto._imageUrl = item[1];
+                objeto._contractType = item[2];
+                objeto.contract = tokenContract;
+              }
+              resultArray.push(objeto); // Agrega cada objeto al resultArray
+            });
+          } else {
+            // Si no es un array, es un solo objeto, entonces lo agregamos a nuestro array resultado.
+            data.contract = tokenContract;
+            resultArray.push(data);
+          }
+
+          console.log(resultArray);
+
+        } catch (error) {
+          console.error("Error fetching metadata:", error);
+        }
       });
+
+      // Ahora, esperamos que todas las promesas se resuelvan.
+      await Promise.all(contractPromises);
+
+      // Haz lo que necesites con resultArray después de que todas las promesas se hayan resuelto.
+      console.log(resultArray)
+      setMetaDataList(resultArray)
     };
 
     fetchData();
+  }, []); // Asegúrate de ajustar las dependencias según tu caso.
 
-  }, []);
 
 
 
   // Filter projects based on selected tag
-  const filteredProjects = 
-  tag === "All" ? metadataList 
-  : metadataList.filter((nft) => nft._contractType.includes(tag));
+  const filteredProjects =
+    tag === "All" ? metadataList
+      : metadataList.filter((nft) => nft._contractType.includes(tag));
 
 
   // Variants for card animation
