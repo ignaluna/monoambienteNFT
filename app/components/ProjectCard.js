@@ -23,7 +23,7 @@ const ProjectCard = ({ url, title, description, key, img, contract }) => {
             <EyeIcon className="h-10 w-10 text-[#ADB7BE] group-hover/link:text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
           </Link>
           <Link
-            href={`https://mumbai.polygonscan.com/${contract}`}
+            href={`https://mumbai.polygonscan.com/address/${contract}`}
             target="_blank"
             className="h-14 w-14 border-2 relative rounded-full border-[#ADB7BE] hover:border-white group/link"
           >
